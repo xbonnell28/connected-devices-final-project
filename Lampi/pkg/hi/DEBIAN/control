@@ -1,0 +1,8 @@
+Package: hi
+Architecture: all
+Maintainer: Nick Barendt
+Depends: python, python-dev
+Priority: optional
+Version: 0.1
+Description: Hello, Deb!
+Section: misc
