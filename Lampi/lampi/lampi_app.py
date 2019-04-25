@@ -5,27 +5,13 @@ from kivy.uix.popup import Popup
 from kivy.uix.label import Label
 from math import fabs
 import json
-import os
 from paho.mqtt.client import Client
 import pigpio
 import lampi_util
 from lamp_common import *
-from analytics import KeenEventRecorder
 
 
 MQTT_CLIENT_ID = "lamp_ui"
-
-
-PROJECT_ID = 'FILL_IN'
-WRITE_KEY = 'FILL_IN'
-
-version_path = os.path.join(os.path.dirname(__file__), '__VERSION__')
-try:
-    with open(version_path, 'r') as version_file:
-        LAMPI_APP_VERSION = version_file.read()
-except IOError:
-    # if version file cannot be opened, we'll stick with unknown
-    LAMPI_APP_VERSION = 'Unknown'
 
 
 class LampiApp(App):
@@ -60,14 +46,10 @@ class LampiApp(App):
     brightness = AliasProperty(_get_brightness, _set_brightness,
                                bind=['_brightness'])
     gpio17_pressed = BooleanProperty(False)
-    device_associated = BooleanProperty(True)
 
     def on_start(self):
-        self.keen = KeenEventRecorder(PROJECT_ID, WRITE_KEY, get_device_id())
         self._publish_clock = None
         self.mqtt_broker_bridged = False
-        self._associated = True
-        self.association_code = None
         self.mqtt = Client(client_id=MQTT_CLIENT_ID)
         self.mqtt.will_set(client_state_topic(MQTT_CLIENT_ID), "0",
                            qos=2, retain=True)
@@ -75,21 +57,11 @@ class LampiApp(App):
         self.mqtt.connect(MQTT_BROKER_HOST, port=MQTT_BROKER_PORT,
                           keepalive=MQTT_BROKER_KEEP_ALIVE_SECS)
         self.mqtt.loop_start()
-        self.set_up_GPIO_and_device_status_popup()
-        self.associated_status_popup = self._build_associated_status_popup()
-        self.associated_status_popup.bind(on_open=self.update_popup_associated)
-        Clock.schedule_interval(self._poll_associated, 0.1)
-
-    def _build_associated_status_popup(self):
-        return Popup(title='Associate your Lamp',
-                     content=Label(text='Msg here', font_size='30sp'),
-                     size_hint=(1, 1), auto_dismiss=False)
+        self.set_up_GPIO_and_IP_popup()
 
     def on_hue(self, instance, value):
         if self._updatingUI:
             return
-        evt = self._create_event_record('hue-slider', value)
-        self.keen.record_event('ui', evt)
         if self._publish_clock is None:
             self._publish_clock = Clock.schedule_once(
                 lambda dt: self._update_leds(), 0.01)
@@ -97,8 +69,6 @@ class LampiApp(App):
     def on_saturation(self, instance, value):
         if self._updatingUI:
             return
-        evt = self._create_event_record('saturation-slider', value)
-        self.keen.record_event('ui', evt)
         if self._publish_clock is None:
             self._publish_clock = Clock.schedule_once(
                 lambda dt: self._update_leds(), 0.01)
@@ -106,8 +76,6 @@ class LampiApp(App):
     def on_brightness(self, instance, value):
         if self._updatingUI:
             return
-        evt = self._create_event_record('brightness-slider', value)
-        self.keen.record_event('ui', evt)
         if self._publish_clock is None:
             self._publish_clock = Clock.schedule_once(
                 lambda dt: self._update_leds(), 0.01)
@@ -115,65 +83,19 @@ class LampiApp(App):
     def on_lamp_is_on(self, instance, value):
         if self._updatingUI:
             return
-        evt = self._create_event_record('power', value)
-        self.keen.record_event('ui', evt)
         if self._publish_clock is None:
             self._publish_clock = Clock.schedule_once(
                 lambda dt: self._update_leds(), 0.01)
 
-    def _create_event_record(self, element, value):
-        return {'element': {'id': element, 'value': value}}
-
     def on_connect(self, client, userdata, flags, rc):
         self.mqtt.publish(client_state_topic(MQTT_CLIENT_ID), "1",
                           qos=2, retain=True)
-        self.mqtt.message_callback_add(TOPIC_LAMP_CHANGE_NOTIFICATION,
-                                       self.receive_new_lamp_state)
         self.mqtt.message_callback_add(broker_bridge_connection_topic(),
                                        self.receive_bridge_connection_status)
-        self.mqtt.message_callback_add(TOPIC_LAMP_ASSOCIATED,
-                                       self.receive_associated)
         self.mqtt.subscribe(broker_bridge_connection_topic(), qos=1)
         self.mqtt.subscribe(TOPIC_LAMP_CHANGE_NOTIFICATION, qos=1)
-        self.mqtt.subscribe(TOPIC_LAMP_ASSOCIATED, qos=2)
-
-    def _poll_associated(self, dt):
-        # this polling loop allows us to synchronize changes from the
-        #  MQTT callbacks (which happen in a different thread) to the
-        #  Kivy UI
-        self.device_associated = self._associated
-
-    def receive_associated(self, client, userdata, message):
-        # this is called in MQTT event loop thread
-        new_associated = json.loads(message.payload)
-        if self._associated != new_associated['associated']:
-            if not new_associated['associated']:
-                self.association_code = new_associated['code']
-            else:
-                self.association_code = None
-            self._associated = new_associated['associated']
-
-    def on_device_associated(self, instance, value):
-        if value:
-            self.associated_status_popup.dismiss()
-        else:
-            self.associated_status_popup.open()
-
-    def update_popup_associated(self, instance):
-        code = self.association_code[0:6]
-        instance.content.text = ("Please use the\n"
-                                 "following code\n"
-                                 "to associate\n"
-                                 "your device\n"
-                                 "on the Web\n{}".format(code)
-                                 )
-
-    def receive_bridge_connection_status(self, client, userdata, message):
-        # monitor if the MQTT bridge to our cloud broker is up
-        if message.payload == "1":
-            self.mqtt_broker_bridged = True
-        else:
-            self.mqtt_broker_bridged = False
+        self.mqtt.message_callback_add(TOPIC_LAMP_CHANGE_NOTIFICATION,
+                                       self.receive_new_lamp_state)
 
     def receive_bridge_connection_status(self, client, userdata, message):
         # monitor if the MQTT bridge to our cloud broker is up
@@ -213,41 +135,29 @@ class LampiApp(App):
         self.mqtt.publish(TOPIC_SET_LAMP_CONFIG, json.dumps(msg), qos=1)
         self._publish_clock = None
 
-    def set_up_GPIO_and_device_status_popup(self):
+    def set_up_GPIO_and_IP_popup(self):
         self.pi = pigpio.pi()
         self.pi.set_mode(17, pigpio.INPUT)
         self.pi.set_pull_up_down(17, pigpio.PUD_UP)
         Clock.schedule_interval(self._poll_GPIO, 0.05)
-        self.network_status_popup = self._build_network_status_popup()
-        self.network_status_popup.bind(on_open=self.update_device_status_popup)
+        self.popup = Popup(title='IP Addresses',
+                           content=Label(text='IP ADDRESS WILL GO HERE'),
+                           size_hint=(1, 1), auto_dismiss=False)
+        self.popup.bind(on_open=self.update_popup_ip_address)
 
-    def _build_network_status_popup(self):
-        return Popup(title='Device Status',
-                     content=Label(text='IP ADDRESS WILL GO HERE'),
-                     size_hint=(1, 1), auto_dismiss=False)
-
-    def update_device_status_popup(self, instance):
+    def update_popup_ip_address(self, instance):
         interface = "wlan0"
         ipaddr = lampi_util.get_ip_address(interface)
         deviceid = lampi_util.get_device_id()
-        msg = ("Version: {}\n"
-               "{}: {}\n"
-               "DeviceID: {}\n"
-               "Broker Bridged: {}\n"
-               "threaded"
-               ).format(
-                        LAMPI_APP_VERSION,
-                        interface,
-                        ipaddr,
-                        deviceid,
-                        self.mqtt_broker_bridged)
+        msg = "{}: {}\nDeviceID: {}\nBroker Bridged: {}".format(
+            interface, ipaddr, deviceid, self.mqtt_broker_bridged)
         instance.content.text = msg
 
     def on_gpio17_pressed(self, instance, value):
         if value:
-            self.network_status_popup.open()
+            self.popup.open()
         else:
-            self.network_status_popup.dismiss()
+            self.popup.dismiss()
 
     def _poll_GPIO(self, dt):
         # GPIO17 is the rightmost button when looking front of LAMPI

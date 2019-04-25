@@ -77,8 +77,6 @@ class LampService(object):
         self._client.publish(client_state_topic(MQTT_CLIENT_ID), "1",
                              qos=2, retain=True)
         self._client.subscribe(TOPIC_SET_LAMP_CONFIG, qos=1)
-        # publish current lamp state at startup
-        self.publish_config_change()
 
     def default_on_message(self, client, userdata, msg):
         print("Received unexpected message on topic " +

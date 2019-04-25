@@ -1,6 +1,0 @@
-#!/bin/bash
-
-pip install https://s3.amazonaws.com/connected-devices/Cython-0.28.2-cp27-cp27mu-linux_armv7l.whl || true
-pip install https://s3.amazonaws.com/connected-devices/Kivy_Garden-0.1.4-cp27-none-any.whl || true
-pip install https://s3.amazonaws.com/connected-devices/Kivy-1.10.1-cp27-cp27mu-linux_armv7l.whl || true
-pip install paho-mqtt || true
