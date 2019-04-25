@@ -1,0 +1,78 @@
+<HomeScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        Button:
+            text: 'Character'
+            on_press: app.root.current = 'character'
+        Button:
+            text: 'Shop'
+            on_press: app.root.current = 'shop'
+        Button:
+            text: 'Search'
+            on_press: app.root.current = 'search'
+<CharacterScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        Label:
+            text: 'Bilbo Baggins'
+        Label:
+            text: 'Attack: 10'
+        Label:
+            text: 'HP: 100'
+        Button:
+            text: 'Home'
+            on_press: app.root.current = 'home'
+<ShopScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        Label:
+            text: 'Weapon Shop'
+        BoxLayout:
+            BoxLayout:
+                orientation: 'vertical'
+                Label:
+                    text: 'Greatsword'
+                Label:
+                    text: '100 gold'
+            Button:
+                text: 'Buy'
+        BoxLayout:
+            BoxLayout:
+                orientation: 'vertical'
+                Label:
+                    text: 'Fire Staff'
+                Label:
+                    text: '50 gold'
+            Button:
+                text: 'Buy'
+        BoxLayout:
+            BoxLayout:
+                orientation: 'vertical'
+                Label:
+                    text: 'Steel Armor'
+                Label:
+                    text: '200 gold'
+            Button:
+                text: 'Buy'
+        Button:
+            text: 'Home'
+            on_press: app.root.current = 'home'
+<SearchScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        Label:
+            text: 'Nearby Beacons'
+        BoxLayout:
+            Label:
+                text: 'Davids Beacon'
+            Button:
+                text: 'Battle!'
+        BoxLayout:
+            Label:
+                text: 'Christians Beacon'
+            Button:
+                text: 'Battle!'
+        Button:
+            text: 'Home'
+            on_press: app.root.current = 'home'
+
