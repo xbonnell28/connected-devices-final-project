@@ -3,7 +3,9 @@
         orientation: 'vertical'
         Button:
             text: 'Character'
-            on_press: app.root.current = 'character'
+            on_press:
+                app.root.current = 'character'
+                app.go_to_character_screen()
         Button:
             text: 'Shop'
             on_press: app.root.current = 'shop'
