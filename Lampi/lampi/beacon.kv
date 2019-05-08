@@ -5,13 +5,14 @@
             text: 'Character'
             on_press:
                 app.root.current = 'character'
-                app.go_to_character_screen()
         Button:
             text: 'Shop'
             on_press: app.root.current = 'shop'
         Button:
             text: 'Search'
-            on_press: app.root.current = 'search'
+            on_press:
+                app.root.current = 'search'
+                app.search()
 <CharacterScreen>:
     BoxLayout:
         orientation: 'vertical'

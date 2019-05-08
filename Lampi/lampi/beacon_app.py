@@ -36,11 +36,17 @@ class TestApp(App):
     def build(self):
         self.mqtt = Client()
         self.mqtt.connect("localhost", 1883)
+        msg = {'beacon_id': 'b827ebc460ad', 'name': 'Christian'}
+        self.mqtt.publish("beacon/available", json.dumps(msg))
         return sm
     
-    def go_to_character_screen(self):
-        msg = {'battle' : True}
-        self.mqtt.publish("lamp/changed", json.dumps(msg), qos=1)
+    def search(self):
+        self.mqtt.message_callback_add("devices/+/beacon/available", self.receive_search_results)
+        self.mqtt.subscribe("beacon/available/+")
+
+    def receive_search_results(self, client, userdata, message):
+        msg = json.loads(message.payload)
+
 
 if __name__ == '__main__':
     TestApp().run()
