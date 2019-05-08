@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+
 import kivy
 import json
 import pigpio
@@ -25,11 +26,24 @@ class ShopScreen(Screen):
 class SearchScreen(Screen):
     pass
 
+class WaitForResponseScreen(Screen):
+    pass
+
+class RespondToBattleRequestScreen(Screen):
+    pass
+
+class BattleScreen(Screen):
+    pass
+
 sm = ScreenManager()
 sm.add_widget(HomeScreen(name="home"))
 sm.add_widget(CharacterScreen(name="character"))
 sm.add_widget(ShopScreen(name="shop"))
 sm.add_widget(SearchScreen(name="search"))
+sm.add_widget(WaitForResponseScreen(name="wait"))
+sm.add_widget(RespondToBattleRequestScreen(name="respond"))
+sm.add_widget(BattleScreen(name="battle"))
+
 
 class TestApp(App):
 
@@ -37,10 +51,9 @@ class TestApp(App):
         self.mqtt = Client()
         self.mqtt.connect("localhost", 1883)
         return sm
-    
-    def go_to_character_screen(self):
-        msg = {'battle' : True}
-        self.mqtt.publish("lamp/changed", json.dumps(msg), qos=1)
+
+    def go_to_search_screen(self):
+        self.mqtt.subscribe('beacon/available')
 
 if __name__ == '__main__':
     TestApp().run()
