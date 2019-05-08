@@ -19,9 +19,9 @@
         Label:
             text: 'Bilbo Baggins'
         Label:
-            text: 'Attack: 10'
+            text: root.get_character_health()
         Label:
-            text: 'HP: 100'
+            text: root.get_character_attack()
         Button:
             text: 'Home'
             on_press: app.root.current = 'home'

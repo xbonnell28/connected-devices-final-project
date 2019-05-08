@@ -13,12 +13,27 @@ from kivy.properties import ObjectProperty
 from paho.mqtt.client import Client
 
 Builder.load_file("beacon.kv")
-
+    
 class HomeScreen(Screen):
     pass
 
 class CharacterScreen(Screen):
-    pass
+
+    def get_character_attack(self):
+        character_data = shelve.open('databases/character.db')
+        try:
+            attack = character_data['attack']
+        finally:
+            character_data.close()
+        return "Attack:{}".format(attack)
+
+    def get_character_health(self):
+        character_data = shelve.open('databases/character.db')
+        try:
+            health = character_data['health']
+        finally:
+            character_data.close()
+        return "Health:{}".format(health)
 
 class ShopScreen(Screen):
     pass
