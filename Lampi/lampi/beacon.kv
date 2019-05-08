@@ -70,6 +70,7 @@
                 text: 'Davids Beacon'
             Button:
                 text: 'Battle!'
+                on_press: app.root.current = 'respond'
         BoxLayout:
             Label:
                 text: 'Christians Beacon'
@@ -78,4 +79,57 @@
         Button:
             text: 'Home'
             on_press: app.root.current = 'home'
+<WaitForResponseScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        BoxLayout:
+            Label:
+                text: "Please Wait"
+        BoxLayout:
+            Label:
+                text: "Waiting on a response from your opponent..."
+<RespondToBattleRequestScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        BoxLayout:
+            orientation: 'vertical'
+            BoxLayout:
+                Label:
+                    text: "An opponent wants to Battle!"
+            BoxLayout:
+                Label:
+                    text: "Do you accept their challenge?"
+        BoxLayout:
+            Button:
+                text: "Yes"
+                on_press: app.root.current = 'battle'
+            Button:
+                text: "No"
+                on_press: app.root.current = 'home'
+<BattleScreen>
+    BoxLayout:
+        orientation: 'vertical'
+        BoxLayout:
+            BoxLayout
+                Label:
+                    text: "Orc HP: 100"
+            BoxLayout:
+                Label:
+                    text: "HP: 100"
 
+        BoxLayout:
+            orientation: 'vertical'
+            BoxLayout:
+                orientation: 'vertical'
+                BoxLayout:
+                    Label:
+                        text: "Bilbo Baggins"
+                BoxLayout:
+                    Label:
+                        text: "HP: 100"
+            BoxLayout:
+                Button:
+                    text: "Attack"
+                Button:
+                    text: "Flee"
+                    on_press: app.root.current = 'home'

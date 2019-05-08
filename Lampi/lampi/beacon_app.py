@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+
 import kivy
 import json
 import pigpio
@@ -25,11 +26,24 @@ class ShopScreen(Screen):
 class SearchScreen(Screen):
     pass
 
+class WaitForResponseScreen(Screen):
+    pass
+
+class RespondToBattleRequestScreen(Screen):
+    pass
+
+class BattleScreen(Screen):
+    pass
+
 sm = ScreenManager()
 sm.add_widget(HomeScreen(name="home"))
 sm.add_widget(CharacterScreen(name="character"))
 sm.add_widget(ShopScreen(name="shop"))
 sm.add_widget(SearchScreen(name="search"))
+sm.add_widget(WaitForResponseScreen(name="wait"))
+sm.add_widget(RespondToBattleRequestScreen(name="respond"))
+sm.add_widget(BattleScreen(name="battle"))
+
 
 class TestApp(App):
 
@@ -46,7 +60,6 @@ class TestApp(App):
 
     def receive_search_results(self, client, userdata, message):
         msg = json.loads(message.payload)
-
 
 if __name__ == '__main__':
     TestApp().run()
