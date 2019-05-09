@@ -186,7 +186,6 @@ class RespondToBattleRequestScreen(Screen):
 
 class BattleScreen(Screen):
     opponent_health = StringProperty()
-    opponent_health = '100'
 
     def attack_opponent(self):
         shop_screen = self.manager.get_screen('shop')
@@ -248,6 +247,8 @@ class BeaconApp(App):
     def handle_response(self, client, userdata, message):
         accepted = json.loads(message.payload)['Accepted']
         if accepted is True:
+            battle_screen = sm.get_screen('battle')
+            battle_screen.opponent_health = '100'
             self.is_in_battle = True
             sm.current = "battle"
         else:
