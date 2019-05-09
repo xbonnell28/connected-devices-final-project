@@ -12,7 +12,6 @@
             text: 'Search'
             on_press:
                 app.root.current = 'search'
-                app.search()
 <CharacterScreen>:
     BoxLayout:
         orientation: 'vertical'
@@ -64,18 +63,19 @@
     BoxLayout:
         orientation: 'vertical'
         Label:
-            text: 'Nearby Beacons'
+            text: 'Available Beacons'
         BoxLayout:
             Label:
                 text: 'Davids Beacon'
             Button:
                 text: 'Battle!'
-                on_press: app.root.current = 'respond'
+                on_press: app.request_battle("b827eb1b49b0")
         BoxLayout:
             Label:
                 text: 'Christians Beacon'
             Button:
                 text: 'Battle!'
+                on_press: app.request_battle("b827ebc460ad")
         Button:
             text: 'Home'
             on_press: app.root.current = 'home'
@@ -87,7 +87,7 @@
                 text: "Please Wait"
         BoxLayout:
             Label:
-                text: "Waiting on a response from your opponent..."
+                text: "Waiting for opponents response..."
 <RespondToBattleRequestScreen>:
     BoxLayout:
         orientation: 'vertical'
@@ -102,10 +102,10 @@
         BoxLayout:
             Button:
                 text: "Yes"
-                on_press: app.root.current = 'battle'
+                on_press: app.respond_to_challenge(app.get_opponent_id(), True) 
             Button:
                 text: "No"
-                on_press: app.root.current = 'home'
+                on_press: app.respond_to_challenge(app.get_opponent_id(), False)
 <BattleScreen>
     BoxLayout:
         orientation: 'vertical'

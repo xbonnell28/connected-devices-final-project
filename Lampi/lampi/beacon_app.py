@@ -5,6 +5,7 @@ import json
 import pigpio
 import shelve
 import colorsys
+import atexit
 
 from kivy.app import App
 from kivy.lang import Builder
@@ -13,7 +14,7 @@ from kivy.properties import ObjectProperty
 from paho.mqtt.client import Client
 
 Builder.load_file("beacon.kv")
-    
+
 class HomeScreen(Screen):
     pass
 
@@ -60,21 +61,48 @@ sm.add_widget(RespondToBattleRequestScreen(name="respond"))
 sm.add_widget(BattleScreen(name="battle"))
 
 
-class TestApp(App):
+class BeaconApp(App):
+    def on_start(self):
+        self.mqtt = Client()
+        self.mqtt.message_callback_add("beacon/request",
+            self.asked_to_battle)
+        self.mqtt.connect("localhost", 1883)
+        self.mqtt.subscribe("beacon/request", qos=1)
+        self.mqtt.loop_start()
 
     def build(self):
-        self.mqtt = Client()
-        self.mqtt.connect("localhost", 1883)
-        msg = {'beacon_id': 'b827ebc460ad', 'name': 'Christian'}
-        self.mqtt.publish("beacon/available", json.dumps(msg))
         return sm
-    
-    def search(self):
-        self.mqtt.message_callback_add("devices/+/beacon/available", self.receive_search_results)
-        self.mqtt.subscribe("beacon/available/+")
 
-    def receive_search_results(self, client, userdata, message):
-        msg = json.loads(message.payload)
+    def request_battle(self, opponentDeviceID):
+        msg = {'OpponentID': opponentDeviceID}
+        self.mqtt.publish("beacon/request", json.dumps(msg))
+        self.mqtt.message_callback_add("beacon/response", self.handle_response)
+        self.mqtt.subscribe("beacon/response")
+        sm.current = "wait"
+
+    def asked_to_battle(self, client, userdata, message):
+        self.opponent_id = json.loads(message.payload)['OpponentID']
+        sm.current = "respond"
+
+    def handle_response(self, client, userdata, message):
+        accepted = json.loads(message.payload)['Accepted']
+        if accepted is True:
+            sm.current = "battle"
+        else:
+            sm.current = "home"
+
+    def get_opponent_id(self):
+        return self.opponent_id
+
+    def respond_to_challenge(self, opponentDeviceID, accepted):
+        if accepted is True:
+            msg = {'OpponentID': opponentDeviceID, 'Accepted': True}
+            self.mqtt.publish("beacon/response", json.dumps(msg))
+            sm.current = "battle"
+        else:
+            msg = {'OpponentID': opponentDeviceID, 'Accepted': False}
+            self.mqtt.publish("beacon/response", json.dumps(msg))
+            sm.current = "home"
 
 if __name__ == '__main__':
-    TestApp().run()
+    BeaconApp().run()
