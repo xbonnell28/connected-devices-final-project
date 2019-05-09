@@ -189,12 +189,19 @@ class BattleScreen(Screen):
     opponent_health = StringProperty()
 
     def attack_opponent(self):
+        shop_screen = self.manager.get_screen('shop')
         character_data = shelve.open('databases/character.db')
         try:
             attack = character_data['attack']
+            self.opponent_health = str(int(self.opponent_health) - int(attack))
+            if int(self.opponent_health) < 0:
+                self.opponent_health = 'You win! You can flee now'
+                character_data['gold'] = str(int(character_data['gold']) + 10)
+                shop_screen.character_gold = character_data['gold']
+                sm.current = "home"
         finally:
             character_data.close()
-        self.opponent_health = str(int(self.opponent_health) - int(attack))
+
 
 sm = ScreenManager()
 sm.add_widget(HomeScreen(name="home"))
