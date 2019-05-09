@@ -19,9 +19,9 @@
         Label:
             text: 'Bilbo Baggins'
         Label:
-            text: 'Attack: 10'
+            text: root.get_character_health()
         Label:
-            text: 'HP: 100'
+            text: root.get_character_attack()
         Button:
             text: 'Home'
             on_press: app.root.current = 'home'
@@ -36,7 +36,7 @@
                 Label:
                     text: 'Greatsword'
                 Label:
-                    text: '100 gold'
+                    text: root.get_great_sword_price()
             Button:
                 text: 'Buy'
         BoxLayout:
@@ -45,7 +45,7 @@
                 Label:
                     text: 'Fire Staff'
                 Label:
-                    text: '50 gold'
+                    text: root.get_fire_staff_price()
             Button:
                 text: 'Buy'
         BoxLayout:
@@ -54,7 +54,7 @@
                 Label:
                     text: 'Steel Armor'
                 Label:
-                    text: '200 gold'
+                    text: root.get_steel_armor_price()
             Button:
                 text: 'Buy'
         Button:
