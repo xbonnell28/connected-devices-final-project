@@ -1,2 +1,3 @@
 lamp_state.db
 *.pyc
+*.db
