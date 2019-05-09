@@ -7,3 +7,11 @@ try:
     character_data['attack'] = '10'
 finally:
     character_data.close()
+
+shop_data= shelve.open('shop.db', writeback=True)
+try:
+    shop_data['Greatsword'] = '100'
+    shop_data['Fire Staff'] = '50'
+    shop_data['Steel Armor'] = '200'
+finally:
+    shop_data.close()
