@@ -101,17 +101,10 @@ class ShopScreen(Screen):
                 gold = gold - steel_armor_price
                 health = health + 5
 
-<<<<<<< HEAD
                 character_data['gold'] = str(gold)
                 character_data['health'] = str(health)
             
                 self.character_gold = str(gold) 
-=======
-            character_data['gold'] = str(gold)
-            character_data['health'] = str(health)
-
-            self.character_gold = str(gold)
->>>>>>> 4376f0d809e4478c18b111c5e425038783b0b1e5
         finally:
             character_data.close()
             shop_data.close()
@@ -137,17 +130,10 @@ class ShopScreen(Screen):
                 gold = gold - great_sword_price
                 attack = attack + 5
 
-<<<<<<< HEAD
                 character_data['gold'] = str(gold)
                 character_data['attack'] = str(attack)
             
                 self.character_gold = str(gold) 
-=======
-            character_data['gold'] = str(gold)
-            character_data['attack'] = str(attack)
-
-            self.character_gold = str(gold)
->>>>>>> 4376f0d809e4478c18b111c5e425038783b0b1e5
         finally:
             character_data.close()
             shop_data.close()
