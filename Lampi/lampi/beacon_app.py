@@ -194,14 +194,16 @@ class BattleScreen(Screen):
         try:
             attack = character_data['attack']
             self.opponent_health = str(int(self.opponent_health) - int(attack))
-            if int(self.opponent_health) < 0:
+            if int(self.opponent_health) <= 0:
                 self.opponent_health = 'You win! You can flee now'
                 character_data['gold'] = str(int(character_data['gold']) + 10)
                 shop_screen.character_gold = character_data['gold']
-                sm.current = "home"
+                sm.current = "victory"
         finally:
             character_data.close()
 
+class VictoryScreen(Screen):
+    pass
 
 sm = ScreenManager()
 sm.add_widget(HomeScreen(name="home"))
@@ -211,6 +213,7 @@ sm.add_widget(SearchScreen(name="search"))
 sm.add_widget(WaitForResponseScreen(name="wait"))
 sm.add_widget(RespondToBattleRequestScreen(name="respond"))
 sm.add_widget(BattleScreen(name="battle"))
+sm.add_widget(VictoryScreen(name="victory"))
 
 
 class BeaconApp(App):

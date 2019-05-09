@@ -156,3 +156,22 @@
                     on_press:
                         app.root.current = 'home'
                         app.set_is_in_battle(False)
+<VictoryScreen>
+    BoxLayout:
+        orientation: 'vertical'
+        BoxLayout:
+            BoxLayout
+                Label:
+                    text: "You win!"
+
+        BoxLayout:
+            orientation: 'vertical'
+            BoxLayout:
+                Button:
+                    text: "Home"
+                    on_press: 
+                        app.root.current = 'home'
+                Button:
+                    text: "Shop"
+                    on_press:
+                        app.root.current = 'shop'
