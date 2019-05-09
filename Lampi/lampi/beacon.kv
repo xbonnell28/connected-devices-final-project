@@ -5,9 +5,12 @@
             text: 'Character'
             on_press:
                 app.root.current = 'character'
+                root.set_character_stats()
         Button:
             text: 'Shop'
-            on_press: app.root.current = 'shop'
+            on_press: 
+                app.root.current = 'shop'
+                root.set_shop_gold()
         Button:
             text: 'Search'
             on_press:
@@ -18,9 +21,9 @@
         Label:
             text: 'Bilbo Baggins'
         Label:
-            text: root.get_character_health()
+            text: "Health: {}".format(root.character_health)
         Label:
-            text: root.get_character_attack()
+            text: "Attack: {}".format(root.character_attack)
         Button:
             text: 'Home'
             on_press: app.root.current = 'home'
@@ -140,6 +143,7 @@
             BoxLayout:
                 Button:
                     text: "Attack"
+                    on_press: root.attack_opponent()
                 Button:
                     text: "Flee"
                     on_press: app.root.current = 'home'

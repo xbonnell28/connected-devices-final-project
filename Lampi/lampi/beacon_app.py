@@ -19,9 +19,29 @@ from paho.mqtt.client import Client
 Builder.load_file("beacon.kv")
 
 class HomeScreen(Screen):
-    pass
+    
+    def set_shop_gold(self):
+        shop_screen = self.manager.get_screen('shop')
+        character_data = shelve.open('databases/character.db')
+        try:
+            shop_screen.character_gold = character_data['gold']
+        finally:
+            character_data.close()
+
+    def set_character_stats(self):
+        character_screen = self.manager.get_screen('character')
+        character_data = shelve.open('databases/character.db')
+        try:
+            character_screen.character_health = character_data['health']
+            character_screen.character_attack = character_data['attack']
+        finally:
+            character_data.close()
+
 
 class CharacterScreen(Screen):
+
+    character_health = StringProperty()
+    character_attack = StringProperty()
 
     def get_character_attack(self):
         character_data = shelve.open('databases/character.db')
@@ -43,10 +63,7 @@ class ShopScreen(Screen):
 
     character_gold = StringProperty()
     
-    def on_enter(self):
-        Clock.schedule_once(self.set_gold)
-
-    def set_gold(self, dt):
+    def set_gold(self):
         character_data = shelve.open('databases/character.db')
         try:
             character_gold = character_data['gold']
@@ -62,6 +79,7 @@ class ShopScreen(Screen):
         return '{} gold'.format(fire_staff_price)
 
     def buy_fire_staff(self):
+        character_screen = self.manager.get_screen('character')
         shop_data = shelve.open('databases/shop.db')
         character_data = shelve.open('databases/character.db')
         try:
@@ -77,6 +95,8 @@ class ShopScreen(Screen):
                 character_data['attack'] = str(attack)
             
                 self.character_gold = str(gold) 
+                character_screen.character_attack = character_data['attack']
+
         finally:
             character_data.close()
             shop_data.close()
@@ -90,6 +110,7 @@ class ShopScreen(Screen):
         return '{} gold'.format(steel_armor_price)
 
     def buy_steel_armor(self):
+        character_screen = self.manager.get_screen('character')
         shop_data = shelve.open('databases/shop.db')
         character_data = shelve.open('databases/character.db')
         try:
@@ -105,6 +126,8 @@ class ShopScreen(Screen):
                 character_data['health'] = str(health)
             
                 self.character_gold = str(gold) 
+                character_screen.character_health = character_data['health']
+
         finally:
             character_data.close()
             shop_data.close()
@@ -118,7 +141,7 @@ class ShopScreen(Screen):
         return '{} gold'.format(great_sword_price)
 
     def buy_great_sword(self):
-
+        character_screen = self.manager.get_screen('character')
         shop_data = shelve.open('databases/shop.db')
         character_data = shelve.open('databases/character.db')
         try:
@@ -134,6 +157,8 @@ class ShopScreen(Screen):
                 character_data['attack'] = str(attack)
             
                 self.character_gold = str(gold) 
+                character_screen.character_attack = character_data['attack']
+
         finally:
             character_data.close()
             shop_data.close()
@@ -156,7 +181,16 @@ class RespondToBattleRequestScreen(Screen):
     pass
 
 class BattleScreen(Screen):
-    pass
+    
+    opponent_health = StringProperty()
+
+    def attack_oppenent():
+        character_data = shelve.open('databases/character.db')
+        try:
+            attack = character_data['attak']
+        finally:
+            character_data.close()
+        opponent_health = opponent_health - int(attack)
 
 sm = ScreenManager()
 sm.add_widget(HomeScreen(name="home"))
