@@ -98,7 +98,7 @@ class BeaconApp(App):
 
     def request_battle(self, opponentDeviceID):
         msg = {'OpponentID': opponentDeviceID}
-        self.mqtt.publish("beacon/request", json.dumps(msg))
+        self.mqtt.publish("beacon/send_request", json.dumps(msg))
         self.mqtt.message_callback_add("beacon/response", self.handle_response)
         self.mqtt.subscribe("beacon/response")
         sm.current = "wait"
@@ -120,11 +120,11 @@ class BeaconApp(App):
     def respond_to_challenge(self, opponentDeviceID, accepted):
         if accepted is True:
             msg = {'OpponentID': opponentDeviceID, 'Accepted': True}
-            self.mqtt.publish("beacon/response", json.dumps(msg))
+            self.mqtt.publish("beacon/send_response", json.dumps(msg))
             sm.current = "battle"
         else:
             msg = {'OpponentID': opponentDeviceID, 'Accepted': False}
-            self.mqtt.publish("beacon/response", json.dumps(msg))
+            self.mqtt.publish("beacon/send_response", json.dumps(msg))
             sm.current = "home"
 
 if __name__ == '__main__':
