@@ -169,13 +169,18 @@ sm.add_widget(BattleScreen(name="battle"))
 
 
 class BeaconApp(App):
+
     def on_start(self):
+        self.is_in_battle = False
         self.mqtt = Client()
         self.mqtt.message_callback_add("beacon/request",
             self.asked_to_battle)
         self.mqtt.connect("localhost", 1883)
         self.mqtt.subscribe("beacon/request", qos=1)
         self.mqtt.loop_start()
+
+    def set_is_in_battle(self, in_battle):
+        self.is_in_battle = in_battle
 
     def build(self):
         return sm
@@ -195,6 +200,7 @@ class BeaconApp(App):
     def handle_response(self, client, userdata, message):
         accepted = json.loads(message.payload)['Accepted']
         if accepted is True:
+            self.is_in_battle = True
             sm.current = "battle"
         else:
             sm.current = "home"
@@ -206,6 +212,7 @@ class BeaconApp(App):
         if accepted is True:
             msg = {'AggressorID': aggressorDeviceID, 'Accepted': True}
             self.mqtt.publish("beacon/send_response", json.dumps(msg))
+            self.is_in_battle = True
             sm.current = "battle"
         else:
             msg = {'AggressorID': aggressorDeviceID, 'Accepted': False}
