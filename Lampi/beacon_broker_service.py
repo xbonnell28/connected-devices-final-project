@@ -16,25 +16,26 @@ class BrokerService(object):
 	def create_and_configure_broker_client(self):
 		client = Client()
         	client.on_connect = self.on_connect
-        	client.message_callback_add("devices/+/beacon/available",
-                                    self.on_message_start_battle)
-		client.on_massage = self.default_on_message
+        	client.message_callback_add("devices/+/beacon/request",
+                                    self.on_battle_request)
+		client.on_message = self.default_on_message
         	return client
 
 	def on_connect(self, client, userdata, rc, unknown):
-		self._client.subscribe("devices/+/beacon/available", qos=1)
-
+		self._client.subscribe("devices/+/beacon/request", qos=1)
+		self._client.subscribe("devices/+/beacon/response", qos=1)
 
 	def default_on_message(self, client, userdata, msg):
 	        print("Received unexpected message on topic " +
         	      msg.topic + " with payload '" + str(msg.payload) + "'")
 
-	def on_message_start_battle(self, client, userdata, msg):
-		print("we got a message")
-		print(msg.topic)
-		device_id = msg.topic.split('/')[1]
-		msg = {'battle': 'this is a test'}
-		self._client.publish("devices/{}/beacon/battle".format(device_id), json.dumps(msg), qos=1)
+	def on_battle_request(self, client, userdata, msg):
+		defender_id = json.loads(msg.payload)['OpponentID']
+		self._client.publish("devices/{}/beacon/request".format(defender_id), json.dumps(msg.payload), qos=1)'
+
+	def on_request_response(self, client, userdata, msg):
+		opponent_id = json.loads(msg.payload)['OpponentID']
+                self._client.publish("devices/{}/beacon/response".format(opponent_id), json.dumps(msg.payload), qos=1)'
 
 
 if __name__ == '__main__':
