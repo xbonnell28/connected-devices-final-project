@@ -61,6 +61,34 @@ class ShopScreen(Screen):
         finally:
             shop_data.close()
         return '{} gold'.format(great_sword_price)
+
+    def buy_great_sword(self):
+        shop_data = shelve.open('databases/shop.db')
+        character_data = shelve.open('databases/character.db')
+        try:
+            gold = int(character_data['gold'])
+            attack = int(character_data['attack'])
+            great_sword_price = int(shop_data['Greatsword'])
+
+            gold = gold - great_sword_price
+            attack = attack + 5
+
+            App.get_running_app().root.ids.ShopScreen.gold = gold
+
+            character_data['gold'] = str(gold)
+            character_data['attack'] = str(attack)
+        finally:
+            character_data.close()
+            shop_data.close()
+
+    def get_character_gold(self):
+        character_data = shelve.open('databases/character.db')
+        try:
+            gold = character_data['gold']
+        finally:
+            character_data.close()
+        return "Gold:{}".format(gold)
+
 class SearchScreen(Screen):
     pass
 
