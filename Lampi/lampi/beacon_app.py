@@ -185,8 +185,8 @@ class RespondToBattleRequestScreen(Screen):
 
 
 class BattleScreen(Screen):
-    
     opponent_health = StringProperty()
+    opponent_health = '100'
 
     def attack_opponent(self):
         shop_screen = self.manager.get_screen('shop')

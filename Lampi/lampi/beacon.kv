@@ -160,18 +160,22 @@
     BoxLayout:
         orientation: 'vertical'
         BoxLayout:
-            BoxLayout
+            orientation: 'vertical'
+            BoxLayout:
                 Label:
                     text: "You win!"
+            BoxLayout:    
+                Label:
+                    text: "You've earned 50 gold"
 
         BoxLayout:
             orientation: 'vertical'
             BoxLayout:
                 Button:
-                    text: "Home"
+                    text: "Return Home"
                     on_press: 
                         app.root.current = 'home'
                 Button:
-                    text: "Shop"
+                    text: "Go to Shop"
                     on_press:
                         app.root.current = 'shop'
