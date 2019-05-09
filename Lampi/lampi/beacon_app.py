@@ -63,8 +63,8 @@ class ShopScreen(Screen):
 
             character_data['gold'] = str(gold)
             character_data['attack'] = str(attack)
-            
-            self.character_gold = str(gold) 
+
+            self.character_gold = str(gold)
         finally:
             character_data.close()
             shop_data.close()
@@ -90,8 +90,8 @@ class ShopScreen(Screen):
 
             character_data['gold'] = str(gold)
             character_data['health'] = str(health)
-            
-            self.character_gold = str(gold) 
+
+            self.character_gold = str(gold)
         finally:
             character_data.close()
             shop_data.close()
@@ -118,8 +118,8 @@ class ShopScreen(Screen):
 
             character_data['gold'] = str(gold)
             character_data['attack'] = str(attack)
-            
-            self.character_gold = str(gold) 
+
+            self.character_gold = str(gold)
         finally:
             character_data.close()
             shop_data.close()
@@ -167,14 +167,15 @@ class BeaconApp(App):
         return sm
 
     def request_battle(self, opponentDeviceID):
-        msg = {'OpponentID': opponentDeviceID}
+        msg = {'DefenderID': opponentDeviceID}
         self.mqtt.publish("beacon/send_request", json.dumps(msg))
         self.mqtt.message_callback_add("beacon/response", self.handle_response)
         self.mqtt.subscribe("beacon/response")
         sm.current = "wait"
 
     def asked_to_battle(self, client, userdata, message):
-        self.opponent_id = json.loads(message.payload)['OpponentID']
+        dict = json.loads(message.payload)
+        self.opponent_id = dict['AggressorID']
         sm.current = "respond"
 
     def handle_response(self, client, userdata, message):
@@ -187,13 +188,13 @@ class BeaconApp(App):
     def get_opponent_id(self):
         return self.opponent_id
 
-    def respond_to_challenge(self, opponentDeviceID, accepted):
+    def respond_to_challenge(self, aggressorDeviceID, accepted):
         if accepted is True:
-            msg = {'OpponentID': opponentDeviceID, 'Accepted': True}
+            msg = {'AggressorID': aggressorDeviceID, 'Accepted': True}
             self.mqtt.publish("beacon/send_response", json.dumps(msg))
             sm.current = "battle"
         else:
-            msg = {'OpponentID': opponentDeviceID, 'Accepted': False}
+            msg = {'AggressorID': aggressorDeviceID, 'Accepted': False}
             self.mqtt.publish("beacon/send_response", json.dumps(msg))
             sm.current = "home"
 
