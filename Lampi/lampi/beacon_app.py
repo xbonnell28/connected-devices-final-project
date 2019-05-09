@@ -43,6 +43,10 @@ class CharacterScreen(Screen):
     character_health = StringProperty()
     character_attack = StringProperty()
 
+    def character_name(self):
+        character_data = shelve.open('databases/character.db')
+        return character_data['name']
+    
     def get_character_attack(self):
         character_data = shelve.open('databases/character.db')
         try:
@@ -184,10 +188,12 @@ class RespondToBattleRequestScreen(Screen):
         battle_screen.opponent_health = '100'
         character_data = shelve.open('databases/character.db')
         battle_screen.character_health = character_data['health']
+        battle_screen.character_name = character_data['name']
 
 class BattleScreen(Screen):
     opponent_health = StringProperty()
     character_health = StringProperty()
+    character_name = StringProperty()
 
     def attack_opponent(self):
         shop_screen = self.manager.get_screen('shop')

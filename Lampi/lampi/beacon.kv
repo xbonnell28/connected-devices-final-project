@@ -19,7 +19,7 @@
     BoxLayout:
         orientation: 'vertical'
         Label:
-            text: 'Hagrid'
+            text: root.character_name()
         Label:
             text: "Health: {}".format(root.character_health)
         Label:
@@ -142,7 +142,7 @@
                 orientation: 'vertical'
                 BoxLayout:
                     Label:
-                        text: "Bilbo Baggins"
+                        text: root.character_name
                 BoxLayout:
                     Label:
                         text: "HP: {}".format(root.character_health)

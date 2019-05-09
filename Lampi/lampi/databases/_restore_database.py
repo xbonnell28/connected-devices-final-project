@@ -6,6 +6,7 @@ try:
     character_data['health'] = '100'
     character_data['attack'] = '10'
     character_data['gold'] = '1000'
+    character_data['name'] = 'Gandorf'
 finally:
     character_data.close()
 
