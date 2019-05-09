@@ -73,17 +73,10 @@ class ShopScreen(Screen):
                 gold = gold - fire_staff_price
                 attack = attack + 2
 
-<<<<<<< HEAD
                 character_data['gold'] = str(gold)
                 character_data['attack'] = str(attack)
             
                 self.character_gold = str(gold) 
-=======
-            character_data['gold'] = str(gold)
-            character_data['attack'] = str(attack)
-
-            self.character_gold = str(gold)
->>>>>>> 4376f0d809e4478c18b111c5e425038783b0b1e5
         finally:
             character_data.close()
             shop_data.close()
