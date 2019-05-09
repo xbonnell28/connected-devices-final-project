@@ -178,19 +178,23 @@ class WaitForResponseScreen(Screen):
     pass
 
 class RespondToBattleRequestScreen(Screen):
-    pass
+
+    def set_opponent_health(self):
+        battle_screen = self.manager.get_screen('battle')
+        battle_screen.opponent_health = '100'
+
 
 class BattleScreen(Screen):
     
     opponent_health = StringProperty()
 
-    def attack_oppenent():
+    def attack_opponent(self):
         character_data = shelve.open('databases/character.db')
         try:
-            attack = character_data['attak']
+            attack = character_data['attack']
         finally:
             character_data.close()
-        opponent_health = opponent_health - int(attack)
+        self.opponent_health = str(int(self.opponent_health) - int(attack))
 
 sm = ScreenManager()
 sm.add_widget(HomeScreen(name="home"))

@@ -119,7 +119,9 @@
         BoxLayout:
             Button:
                 text: "Yes"
-                on_press: app.respond_to_challenge(app.get_opponent_id(), True) 
+                on_press: 
+                    root.set_opponent_health()
+                    app.respond_to_challenge(app.get_opponent_id(), True) 
             Button:
                 text: "No"
                 on_press: app.respond_to_challenge(app.get_opponent_id(), False)
@@ -129,10 +131,10 @@
         BoxLayout:
             BoxLayout
                 Label:
-                    text: "Orc HP: 100"
+                    text: "Orc"
             BoxLayout:
                 Label:
-                    text: "HP: 100"
+                    text: "HP: {}".format(root.opponent_health)
 
         BoxLayout:
             orientation: 'vertical'
@@ -147,7 +149,8 @@
             BoxLayout:
                 Button:
                     text: "Attack"
-                    on_press: root.attack_opponent()
+                    on_press: 
+                        root.attack_opponent()
                 Button:
                     text: "Flee"
                     on_press:
