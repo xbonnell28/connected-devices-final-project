@@ -9,6 +9,7 @@ import atexit
 
 from kivy.app import App
 from kivy.lang import Builder
+from kivy.uix.button import Button
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.properties import ObjectProperty
 from paho.mqtt.client import Client
@@ -37,8 +38,30 @@ class CharacterScreen(Screen):
         return "Health:{}".format(health)
 
 class ShopScreen(Screen):
-    pass
 
+    def get_fire_staff_price(self):
+        shop_data = shelve.open('databases/shop.db')
+        try:
+            fire_staff_price = shop_data['Fire Staff']
+        finally:
+            shop_data.close()
+        return '{} gold'.format(fire_staff_price)
+
+    def get_steel_armor_price(self):
+        shop_data = shelve.open('databases/shop.db')
+        try:
+            steel_armor_price = shop_data['Steel Armor']
+        finally:
+            shop_data.close()
+        return '{} gold'.format(steel_armor_price)
+
+    def get_great_sword_price(self):
+        shop_data = shelve.open('databases/shop.db')
+        try:
+            great_sword_price = shop_data['Greatsword']
+        finally:
+            shop_data.close()
+        return '{} gold'.format(great_sword_price)
 class SearchScreen(Screen):
     pass
 
