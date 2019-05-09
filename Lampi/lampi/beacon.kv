@@ -99,8 +99,12 @@
             Label:
                 text: "Please Wait"
         BoxLayout:
+            orientation: 'vertical'
             Label:
                 text: "Waiting for opponents response..."
+            Button:
+                text: "Cancel"
+                on_press: app.root.current = 'search'
 <RespondToBattleRequestScreen>:
     BoxLayout:
         orientation: 'vertical'
@@ -146,4 +150,6 @@
                     on_press: root.attack_opponent()
                 Button:
                     text: "Flee"
-                    on_press: app.root.current = 'home'
+                    on_press:
+                        app.root.current = 'home'
+                        app.set_is_in_battle(False)
