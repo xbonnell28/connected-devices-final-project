@@ -12,6 +12,7 @@ from kivy.lang import Builder
 from kivy.uix.button import Button
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.properties import ObjectProperty
+from kivy.properties import StringProperty, NumericProperty
 from paho.mqtt.client import Client
 
 Builder.load_file("beacon.kv")
@@ -39,6 +40,8 @@ class CharacterScreen(Screen):
 
 class ShopScreen(Screen):
 
+    character_gold = StringProperty()
+
     def get_fire_staff_price(self):
         shop_data = shelve.open('databases/shop.db')
         try:
@@ -46,6 +49,25 @@ class ShopScreen(Screen):
         finally:
             shop_data.close()
         return '{} gold'.format(fire_staff_price)
+
+    def buy_fire_staff(self):
+        shop_data = shelve.open('databases/shop.db')
+        character_data = shelve.open('databases/character.db')
+        try:
+            gold = int(character_data['gold'])
+            attack = int(character_data['attack'])
+            fire_staff_price = int(shop_data['Fire Staff'])
+
+            gold = gold - fire_staff_price
+            attack = attack + 2
+
+            character_data['gold'] = str(gold)
+            character_data['attack'] = str(attack)
+            
+            self.character_gold = str(gold) 
+        finally:
+            character_data.close()
+            shop_data.close()
 
     def get_steel_armor_price(self):
         shop_data = shelve.open('databases/shop.db')
@@ -55,6 +77,25 @@ class ShopScreen(Screen):
             shop_data.close()
         return '{} gold'.format(steel_armor_price)
 
+    def buy_steel_armor(self):
+        shop_data = shelve.open('databases/shop.db')
+        character_data = shelve.open('databases/character.db')
+        try:
+            gold = int(character_data['gold'])
+            health = int(character_data['health'])
+            steel_armor_price = int(shop_data['Steel Armor'])
+
+            gold = gold - steel_armor_price
+            health = health + 5
+
+            character_data['gold'] = str(gold)
+            character_data['health'] = str(health)
+            
+            self.character_gold = str(gold) 
+        finally:
+            character_data.close()
+            shop_data.close()
+
     def get_great_sword_price(self):
         shop_data = shelve.open('databases/shop.db')
         try:
@@ -62,6 +103,35 @@ class ShopScreen(Screen):
         finally:
             shop_data.close()
         return '{} gold'.format(great_sword_price)
+
+    def buy_great_sword(self):
+
+        shop_data = shelve.open('databases/shop.db')
+        character_data = shelve.open('databases/character.db')
+        try:
+            gold = int(character_data['gold'])
+            attack = int(character_data['attack'])
+            great_sword_price = int(shop_data['Greatsword'])
+
+            gold = gold - great_sword_price
+            attack = attack + 5
+
+            character_data['gold'] = str(gold)
+            character_data['attack'] = str(attack)
+            
+            self.character_gold = str(gold) 
+        finally:
+            character_data.close()
+            shop_data.close()
+
+    def get_character_gold(self):
+        character_data = shelve.open('databases/character.db')
+        try:
+            gold = character_data['gold']
+        finally:
+            character_data.close()
+        return "Gold:{}".format(gold)
+
 class SearchScreen(Screen):
     pass
 

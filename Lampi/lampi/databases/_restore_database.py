@@ -5,6 +5,7 @@ character_data = shelve.open('character.db')
 try:
     character_data['health'] = '100'
     character_data['attack'] = '10'
+    character_data['gold'] = '1000'
 finally:
     character_data.close()
 
