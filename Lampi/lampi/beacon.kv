@@ -30,8 +30,9 @@
         Label:
             text: 'Weapon Shop'
         Label:
+            id:gold
             text:
-                root.get_character_gold()
+                root.character_gold
         BoxLayout:
             BoxLayout:
                 orientation: 'vertical'
@@ -52,6 +53,8 @@
                     text: root.get_fire_staff_price()
             Button:
                 text: 'Buy'
+                on_press:
+                    root.buy_fire_staff()
         BoxLayout:
             BoxLayout:
                 orientation: 'vertical'
@@ -61,6 +64,7 @@
                     text: root.get_steel_armor_price()
             Button:
                 text: 'Buy'
+                on_press:root.buy_steel_armor()
         Button:
             text: 'Home'
             on_press: app.root.current = 'home'
