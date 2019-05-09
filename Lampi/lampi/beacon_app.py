@@ -182,16 +182,19 @@ class RespondToBattleRequestScreen(Screen):
     def set_opponent_health(self):
         battle_screen = self.manager.get_screen('battle')
         battle_screen.opponent_health = '100'
-
+        character_data = shelve.open('databases/character.db')
+        battle_screen.character_health = character_data['health']
 
 class BattleScreen(Screen):
     opponent_health = StringProperty()
+    character_health = StringProperty()
 
     def attack_opponent(self):
         shop_screen = self.manager.get_screen('shop')
         character_data = shelve.open('databases/character.db')
         try:
             attack = character_data['attack']
+            self.character_health = str(int(self.character_health) - 9)
             self.opponent_health = str(int(self.opponent_health) - int(attack))
             if int(self.opponent_health) <= 0:
                 self.opponent_health = 'You win! You can flee now'
